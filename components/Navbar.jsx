@@ -17,21 +17,21 @@ const Navbar = () => {
               <Link className="nav-link" href="/portofilo">Portfolio</Link>
             </li>
             <li className="nav-item mr-3">
-              <Link className="nav-link" href="/categories">Courses</Link>
+              <Link className="nav-link" href="/fourm/categories">Fourm</Link>
             </li>
             <li className="nav-item mr-3">
-              <a className="nav-link" href="#">Cv</a>
+              <Link className="nav-link" href="/cv">Cv</Link>
             </li>
             <li className="nav-item mr-3">
-              <a className="nav-link" href="#">Ask me</a>
+              <Link className="nav-link" href="#">Ask me</Link>
             </li>
           </ul>
           <ul className="navbar-nav ml-auto">
             <li className="nav-item mr-3">
-              <a className="nav-link" href="#">Sign Up</a>
+              <Link className="nav-link" href="/register">Sign Up</Link>
             </li>
             <li className="nav-item mr-3">
-              <a className="nav-link btn btn-success bg-green-2 bright" href="#">Sign In</a>
+              <Link className="nav-link btn btn-success bg-green-2 bright" href="/login">Sign In</Link>
             </li>
           </ul>
         </div>

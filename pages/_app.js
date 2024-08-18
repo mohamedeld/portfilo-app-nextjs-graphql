@@ -3,16 +3,18 @@ import "@/styles/globals.css";
 import "../styles/index.scss";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
 
 export default function App({ Component, pageProps }) {
   return (
-    <>
+    <div className="portfolio-app">
     <Navbar/>
-    <main>
+   {Component.name === "Home" &&<Hero/>}
+    <div className="container">
     <Component {...pageProps} />;
-    </main>
+    </div>
     <Footer/>
-    </>
+    </div>
   )
   
 }
