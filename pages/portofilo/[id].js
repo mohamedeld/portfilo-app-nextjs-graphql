@@ -1,47 +1,54 @@
+import { GET_PORTFOLIO } from "@/apollo/queries";
 import { formatDate } from "@/utils/functions";
+import { useQuery } from "@apollo/react-hooks";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { DotLoader } from "react-spinners";
 
 const PortofiloDetail = () => {
   const router = useRouter();
-  const [portfolio,setSinglePortfolio] = useState(null);
-  async function getData(){
-    const query = `
-      query Portfolio($id:ID!){
-        portfolio(id:$id){
-          _id
-          title
-          company
-          companyWebsite
-          location
-          jobTitle
-          description
-          
-        }
-      }
-    `;
-  const response = await axios.post(`http://localhost:4000/graphql`,{
-    query:query,
-    variables:{
-      id:router?.query?.id
+  const [portfolioId, setPortfolioId] = useState(null);
+
+  useEffect(() => {
+    // Update portfolioId state when router.query.id changes
+    if (router.query.id) {
+      setPortfolioId(router.query.id);
     }
-  }).then(result=> setSinglePortfolio(result?.data?.data?.portfolio)).catch(err=> console.log(err?.message));
+  }, [router.query.id]);
+    const {loading,error,data} = useQuery(GET_PORTFOLIO,{variables:{
+      id:portfolioId
+    },
+    skip:!portfolioId
+  });
+
+  if(loading) {
+    return (
+      <DotLoader />
+    )
+  }
+  if(error){
+    toast.error(error?.message)
+  }
+ 
+  if(data){
+    console.log("data", data);  
   }
 
-  useEffect(()=>{
-    getData()
-  },[]);
+
   return (
     <>
-      <div className="portfolio-detail">
+    
+      {data? (
+        <div className="portfolio-detail">
         <div className="container">
 
           <div className="jumbotron">
-            <h1 className="display-3">{portfolio?.title}</h1>
-            <p className="lead">{portfolio?.jobTitle}</p>
+            <h1 className="display-3">{data?.portfolio?.title}</h1>
+            <p className="lead">{data?.portfolio?.jobTitle}</p>
             <p>
-              <a className="btn btn-lg btn-success" href={portfolio?.companyWebsite} role="button">
+              <a className="btn btn-lg btn-success" href={data?.portfolio?.companyWebsite} role="button">
                 See Company</a>
               </p>
           </div>
@@ -49,29 +56,34 @@ const PortofiloDetail = () => {
           <div className="row marketing">
             <div className="col-lg-6">
               <h4 className="title">Location</h4>
-              <p className="text">{portfolio?.location}</p>
+              <p className="text">{data?.portfolio?.location}</p>
 
               <h4 className="title">Start Date</h4>
-              <p className="text">{formatDate(portfolio?.startDate)}</p>
+              <p className="text">{formatDate(data?.portfolio?.startDate)}</p>
             </div>
 
             <div className="col-lg-6">
               {/* TODO: days later... */}
               <h4 className="title">Days</h4>
-              <p className="text">{portfolio?.daysOfExperience}</p>
+              <p className="text">{data?.portfolio?.daysOfExperience}</p>
 
               <h4 className="title">End Date</h4>
-              <p className="text">{(portfolio?.endDate && formatDate(portfolio?.endDate)) || 'Present'}</p>
+              <p className="text">{(data?.portfolio?.endDate && formatDate(data?.portfolio?.endDate)) || 'Present'}</p>
             </div>
             <div className="col-md-12">
               <hr />
               <h4 className="title">Description</h4>
-              <p>{portfolio?.description}</p>
+              <p>{data?.portfolio?.description}</p>
               </div>
           </div>
         </div>
       </div>
-    </>
+      )
+      :(
+        <DotLoader/>
+      )}
+   
+    </> 
   )
 }
 
