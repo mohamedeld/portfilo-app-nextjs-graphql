@@ -1,7 +1,73 @@
 import axios from "axios"
+import Link from "next/link"
+import { useState } from "react";
 
 const Portofilo = ({portofilo}) => {
-  
+  console.log(portofilo)
+  const [portofilos,setPortofilos] = useState(portofilo);
+  async function createData(){
+    const query = `
+      mutation CreatePortfolio{
+        createPortfolio(input:{
+        title: "Work in Mansoura",
+        company: "WhoKnows",
+        companyWebsite: "www.google.com",
+        location: "Mansoura, Montana",
+        jobTitle: "Housekeeping",
+        description: "So much responsibility....Overloaaaaaad",
+        startDate: "01/01/2020",
+        endDate: "01/01/2021",
+      }){
+        _id
+        title
+        company
+        companyWebsite
+        location
+        jobTitle
+        description
+        startDate
+        endDate
+        }
+      }
+    `;
+    const response = await axios.post("http://localhost:4000/graphql",{query}).then(({data})=> setPortofilos(prev=> [...prev,data?.data?.createPortfolio])).catch(err=> console.log(err));
+  }
+  async function updatedPortofiloData(id){
+    const query = `
+      mutation UpdatedPortfolio{
+        updatePortfolio(id:"${id}",input:{
+          title: "Work in meno",
+          company: "WhoKnows",
+          companyWebsite: "www.google.com",
+          location: "meno, Montana",
+          jobTitle: "Housekeeping",
+          description: "So much responsibility....Overloaaaaaad",
+          startDate: "01/01/2020",
+          endDate: "01/01/2021",
+        }){
+          _id
+          title
+          company
+          companyWebsite
+          location
+          jobTitle
+          description
+          startDate
+          endDate
+        }
+      }
+    `;
+    const response = await axios.post("http://localhost:4000/graphql",{query}).then(({data})=> {
+     
+      const updatedPortfolio = data?.data?.updatePortfolio;
+      const index = portofilos?.findIndex(p=> p?._id === id);
+      
+      const newPortfolios = portofilos?.slice();
+     
+      newPortfolios[index] = updatedPortfolio;
+      setPortofilos(newPortfolios)
+    }).catch(err=> console.log(err));
+  }
   return (
     <div className="container">
       <section className="section-title">
@@ -10,11 +76,11 @@ const Portofilo = ({portofilo}) => {
             <h1>Portfolios</h1>
           </div>
         </div>
-        <button className="btn btn-primary" onClick={()=>fetchData()}>Fetch Data</button>
+        <button className="btn btn-primary" onClick={()=>createData()}>create data</button>
       </section>
       <section className="pb-5">
         <div className="row">
-          {portofilo.data?.portfolios?.length> 0 ? portofilo.data?.portfolios?.map(item=>{
+          {portofilos?.length> 0 ? portofilos?.map(item=>{
             return (
               <div className="col-md-4" key={item?._id}>
               <div className="card subtle-shadow no-border">
@@ -25,7 +91,9 @@ const Portofilo = ({portofilo}) => {
                 </div>
                 <div className="card-footer no-border">
                   <small className="text-muted">Last updated 3 mins ago</small>
+                  <Link href={`/portofilo/${item?._id}`}>Go to details</Link>
                 </div>
+                <button className="btn btn-primary" onClick={()=> updatedPortofiloData(item?._id)}>Update</button>
               </div>
             </div>
             )})
@@ -57,7 +125,7 @@ export async function getServerSideProps(){
     const {data}= await axios.post('http://localhost:4000/graphql',{query});
     return {
       props:{
-        portofilo:data
+        portofilo:data?.data?.portfolios
       }
     }
   }catch(error){
