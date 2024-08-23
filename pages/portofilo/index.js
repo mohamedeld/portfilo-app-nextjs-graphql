@@ -1,3 +1,4 @@
+import { useCreatePortfolio, useDeletePortfolio, useGetPortfolios, useUpdatePortfolio } from "@/apollo/actions";
 import { CREATE_PORTFOLIO, GET_PORTFOLIOS, UPDATE_PORTFOLIO } from "@/apollo/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import axios from "axios"
@@ -11,22 +12,11 @@ import { DotLoader } from "react-spinners";
 const Portofilo = () => {
   // const [getPortfolios,{loading,data}] = useLazyQuery(GET_PORTFOLIOS);
   // const [portfolios,setPortfolios] = useState([]);
-  const {data:dataP,loading,error} = useQuery(GET_PORTFOLIOS);
+  const {data:dataP,loading,error} = useGetPortfolios();
   
-  const [createPortfolio,{data:dataC,loading:createLoading}] = useMutation(CREATE_PORTFOLIO,{
-    update(cache,{data:{createPortfolio}}){
-      const data = cache.readQuery({query:GET_PORTFOLIOS});
-      
-      cache.writeQuery({
-        query:GET_PORTFOLIOS,
-        data:{portfolios:[...data?.portfolios,createPortfolio]}
-      })
-    },
-    refetchQueries: [{ query: GET_PORTFOLIOS }],
-  });
-  const [updatePortfolio,{loading:updateLoading}]=useMutation(UPDATE_PORTFOLIO,{
-    refetchQueries: [{ query: GET_PORTFOLIOS }],
-  }) 
+  const [createPortfolio,{data:dataC,loading:createLoading}] = useCreatePortfolio();
+  const [updatePortfolio,{loading:updateLoading}]=useUpdatePortfolio();
+  const [deletePortfolio] = useDeletePortfolio();
   if(loading || createLoading){
     return (
       <DotLoader/>
@@ -42,7 +32,6 @@ const Portofilo = () => {
     )
   }
 
-  
 
   // const graphDeletePort= async (id)=>{
   //   const query = `
@@ -79,11 +68,18 @@ const Portofilo = () => {
                   <small className="text-muted">Last updated 3 mins ago</small>
                   <Link href={`/portofilo/${item?._id}`}>Go to details</Link>
                 </div>
+                <div className="d-flex justify-items-center align-items-center gap-4">
                 <button className="btn btn-primary" onClick={()=> updatePortfolio({
                   variables:{
                     id:item._id
                   }
                 })}>Update</button>
+                <button className="btn btn-danger" onClick={()=> deletePortfolio({
+                  variables:{
+                    id:item._id
+                  }
+                })}>Delete</button>
+                </div>
               </div>
             </div> 
            )}) 
