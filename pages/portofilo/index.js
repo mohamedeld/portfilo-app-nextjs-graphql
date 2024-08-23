@@ -1,57 +1,49 @@
-import { GET_PORTFOLIOS } from "@/apollo/queries";
-import { useLazyQuery, useQuery } from "@apollo/react-hooks";
+import { CREATE_PORTFOLIO, GET_PORTFOLIOS, UPDATE_PORTFOLIO } from "@/apollo/queries";
+import { useMutation, useQuery } from "@apollo/client";
 import axios from "axios"
 import Link from "next/link"
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { DotLoader } from "react-spinners";
 
-const Portofilo = () => {
-  const [getPortfolios,{loading,data}] = useLazyQuery(GET_PORTFOLIOS);
 
-  useEffect(()=>{
-    getPortfolios();
-  },[]); 
-  if(loading || !data){
-    <DotLoader/>
-  }
- 
+
+const Portofilo = () => {
+  // const [getPortfolios,{loading,data}] = useLazyQuery(GET_PORTFOLIOS);
+  // const [portfolios,setPortfolios] = useState([]);
+  const {data:dataP,loading,error} = useQuery(GET_PORTFOLIOS);
   
-  // async function updatedPortofiloData(id){
-  //   const query = `
-  //     mutation UpdatedPortfolio{
-  //       updatePortfolio(id:"${id}",input:{
-  //         title: "Work in meno",
-  //         company: "WhoKnows",
-  //         companyWebsite: "www.google.com",
-  //         location: "meno, Montana",
-  //         jobTitle: "Housekeeping",
-  //         description: "So much responsibility....Overloaaaaaad",
-  //         startDate: "01/01/2020",
-  //         endDate: "01/01/2021",
-  //       }){
-  //         _id
-  //         title
-  //         company
-  //         companyWebsite
-  //         location
-  //         jobTitle
-  //         description
-  //         startDate
-  //         endDate
-  //       }
-  //     }
-  //   `;
-  //   const response = await axios.post("http://localhost:4000/graphql",{query}).then(({data})=> {
-     
-  //     const updatedPortfolio = data?.data?.updatePortfolio;
-  //     const index = portofilos?.findIndex(p=> p?._id === id);
+  const [createPortfolio,{data:dataC,loading:createLoading}] = useMutation(CREATE_PORTFOLIO,{
+    update(cache,{data:{createPortfolio}}){
+      const data = cache.readQuery({query:GET_PORTFOLIOS});
       
-  //     const newPortfolios = data?.portofilos?.slice();
-     
-  //     newPortfolios[index] = updatedPortfolio;
-  //     setPortofilos(newPortfolios)
-  //   }).catch(err=> console.log(err));
-  // }
+      cache.writeQuery({
+        query:GET_PORTFOLIOS,
+        data:{portfolios:[...data?.portfolios,createPortfolio]}
+      })
+    },
+    refetchQueries: [{ query: GET_PORTFOLIOS }],
+  });
+  const [updatePortfolio,{loading:updateLoading}]=useMutation(UPDATE_PORTFOLIO,{
+    refetchQueries: [{ query: GET_PORTFOLIOS }],
+  }) 
+  if(loading || createLoading){
+    return (
+      <DotLoader/>
+    )
+  }
+  const portfolios = dataP && dataP?.portfolios || [];
+
+
+
+  if(error){
+    return(
+      <p>{error?.message}</p>
+    )
+  }
+
+  
+
   // const graphDeletePort= async (id)=>{
   //   const query = `
   //     mutation DeletePortfolio($id:ID){
@@ -70,11 +62,11 @@ const Portofilo = () => {
             <h1>Portfolios</h1>
           </div>
         </div>
-        <button className="btn btn-primary" onClick={()=>createData()}>create data</button>
+        <button className="btn btn-primary" onClick={()=>createPortfolio()}>create data</button>
       </section>
       <section className="pb-5">
         <div className="row">
-         {data?.portfolios?.length> 0 ? data?.portfolios?.map(item=>{ 
+         {portfolios?.length> 0 ? portfolios?.map(item=>{ 
            return (
               <div className="col-md-4" key={item?._id}>
               <div className="card subtle-shadow no-border">
@@ -87,7 +79,11 @@ const Portofilo = () => {
                   <small className="text-muted">Last updated 3 mins ago</small>
                   <Link href={`/portofilo/${item?._id}`}>Go to details</Link>
                 </div>
-                <button className="btn btn-primary" onClick={()=> updatedPortofiloData(item?._id)}>Update</button>
+                <button className="btn btn-primary" onClick={()=> updatePortfolio({
+                  variables:{
+                    id:item._id
+                  }
+                })}>Update</button>
               </div>
             </div> 
            )}) 

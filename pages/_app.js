@@ -4,11 +4,12 @@ import "../styles/index.scss";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
-import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { Toaster } from "react-hot-toast";
 
 const client = new ApolloClient({
-  uri:'http://localhost:4000/graphql'
+  uri:'http://localhost:4000/graphql',
+  cache: new InMemoryCache(),
 })
 
 export default function App({ Component, pageProps }) {
@@ -20,6 +21,7 @@ export default function App({ Component, pageProps }) {
     <div className="container">
     <Component {...pageProps} />;
     </div>
+    <Toaster/>
     <Footer/>
     </div>
     </ApolloProvider>

@@ -1,4 +1,5 @@
 import { GET_PORTFOLIO } from "@/apollo/queries";
+import withApollo from "@/hoc/withApollo";
 import { formatDate } from "@/utils/functions";
 import { useQuery } from "@apollo/react-hooks";
 import axios from "axios";
