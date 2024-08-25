@@ -122,4 +122,40 @@ export const SIGNIN=gql`
       password:$password
     })
   }
+`;
+
+export const GET_SIGNLE_USER=gql`
+  query GetSingleUser($id:ID){
+    getSingleUser(id:$id){
+      username
+      name
+      email
+      role
+      avatar
+    }
+  }
+`;
+
+export const GET_ALL_USERS = gql`
+  query GetAllUsers{
+    getAllUsers{
+      username
+      name
+      email
+      role
+      avatar
+    }
+  }
+`;
+
+export const GET_AUTH_USER=gql`
+  query GetAuthUser{
+    getAuthUser{
+      username
+      name
+      email
+      role
+      avatar
+    }
+  }
 `

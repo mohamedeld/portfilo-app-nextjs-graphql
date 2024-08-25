@@ -1,22 +1,33 @@
 import { SIGNIN } from '@/apollo/queries';
 import { useMutation } from '@apollo/client';
-import React from 'react'
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast';
 
 const Login = () => {
   const {register,handleSubmit,formState:{errors,isSubmitting}} = useForm();
-  const [signIn,{data,loading,errors:errorMutation,reset}] = useMutation(SIGNIN)
 
+  useEffect(()=>{
+    const token = localStorage.getItem("token");
+    if(token){
+      router.push("/");
+    }
+  },[])
+
+  const [signIn,{data,loading,errors:errorMutation,reset}] = useMutation(SIGNIN)
+  const router = useRouter();
   const onSubmit = async (subData)=>{
     const submitData = {
       email:subData.email,
       password:subData.password
     }
-    await signIn({
+   const res=  await signIn({
       variables:submitData
     });
     toast.success("logined successfully");
+    localStorage.setItem("token",res?.data?.signIn);
+    router.push("/")
     reset();
   }
    return (
