@@ -51,7 +51,9 @@ const Portofilo = () => {
             <h1>Portfolios</h1>
           </div>
         </div>
-        <button className="btn btn-primary" onClick={()=>createPortfolio()}>create data</button>
+        <button className="btn btn-primary" >
+          <Link href="/portofilo/new">create data</Link>
+        </button>
       </section>
       <section className="pb-5">
         <div className="row">

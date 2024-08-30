@@ -1,5 +1,5 @@
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { SessionProvider } from "next-auth/react"
+import { getSession, SessionProvider } from "next-auth/react"
 
 import "@/styles/globals.css";
 import "../styles/index.scss";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { Toaster } from "react-hot-toast";
+import "react-datepicker/dist/react-datepicker.css";
 
 export const client = new ApolloClient({
   uri:'http://localhost:4000/graphql',
@@ -32,4 +33,14 @@ export default function App({ Component, pageProps:{session,...pageProps} }) {
     </ApolloProvider>
   )
   
+}
+
+
+export async function getServerSideProps(context){
+  const session = await getSession(context);
+  return {
+    props:{
+      session
+    }
+  }
 }

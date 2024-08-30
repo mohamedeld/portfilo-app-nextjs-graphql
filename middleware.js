@@ -8,8 +8,7 @@ export async function middleware(req,res){
     secret:process.env.JWT_SECRET,
     secureCookie:process.env.NODE_ENV === 'production'
   })
-  console.log("sess",session)
-  console.log("session ",session)
+  
   if(pathname === '/'){
     if(!session){
       return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);

@@ -79,7 +79,7 @@ const Login = () => {
               </div>
               <button
                 type="submit"
-                className="btn btn-main bg-blue py-2 ttu">
+                className="btn btn-main bg-blue py-2 ttu" disabled={isSubmitting}>
                   {isSubmitting ? 'Submitting...':'Submit'}
                 </button>
             </form>

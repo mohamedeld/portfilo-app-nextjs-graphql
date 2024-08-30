@@ -7,10 +7,7 @@ import React, { useContext, useEffect, useState } from 'react'
 const Navbar = () => {
   
   const session = useSession();
-    console.log("ss ",session)
-  const clearToken = ()=>{
-    // localStorage.removeItem("token");
-  }
+  
   return (
     <>
       <div className="navbar-wrapper">

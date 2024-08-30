@@ -35,16 +35,25 @@ export const GET_PORTFOLIOS = gql`
 `;
 
 export const CREATE_PORTFOLIO= gql`
-  mutation CreatePortfolio{
+  mutation CreatePortfolio(
+    $title:String
+    $company:String
+    $companyWebsite:String
+    $location:String
+    $jobTitle:String
+    $description:String
+    $startDate:String
+    $endDate:String
+  ){
     createPortfolio(input:{
-      title: "Work in Mansoura",
-      company: "WhoKnows",
-      companyWebsite: "www.google.com",
-      location: "Mansoura, Montana",
-      jobTitle: "Housekeeping",
-      description: "So much responsibility....Overloaaaaaad",
-      startDate: "2021-12-12T23:59Z",
-      endDate: "2024-12-12T23:59Z",
+      title:$title
+      company: $company
+      companyWebsite: $companyWebsite
+      location: $location
+      jobTitle: $jobTitle
+      description:$description
+      startDate: $startDate
+      endDate: $endDate
     }){
       _id
       title
