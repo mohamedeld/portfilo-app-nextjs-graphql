@@ -1,5 +1,6 @@
 import { SIGNIN } from '@/apollo/queries';
 import { useMutation } from '@apollo/client';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -15,20 +16,28 @@ const Login = () => {
     }
   },[])
 
-  const [signIn,{data,loading,errors:errorMutation,reset}] = useMutation(SIGNIN)
   const router = useRouter();
   const onSubmit = async (subData)=>{
-    const submitData = {
-      email:subData.email,
-      password:subData.password
+    try{
+
+      const res=  await signIn("credentials",{
+        email:subData.email,
+        password:subData.password,
+        redirect:false
+        });
+        if(res?.status === 200){
+          toast.success("logined successfully");
+          router.push("/");
+        }else{
+          toast.error("something went wrong check your credentials");
+          
+          return;
+        }
+    }catch(error){
+      console.log(error)
     }
-   const res=  await signIn({
-      variables:submitData
-    });
-    toast.success("logined successfully");
-    localStorage.setItem("token",res?.data?.signIn);
-    router.push("/")
-    reset();
+   
+    // reset();
   }
    return (
     <>
