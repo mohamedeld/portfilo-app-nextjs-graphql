@@ -1,6 +1,19 @@
-import React from 'react'
+import {  ALLCATEGORY } from "@/apollo/queries"
+import { useQuery } from "@apollo/client"
+import Link from "next/link";
+import { DotLoader } from "react-spinners";
 
 const Categories = () => {
+  const {data,loading,error} = useQuery(ALLCATEGORY);
+  if(loading){
+    return (
+      <DotLoader/>
+    )
+  }
+  if(error){
+    console.log(error)
+  }
+
   return (
     <>
      <section className="section-title">
@@ -12,9 +25,12 @@ const Categories = () => {
       </section>
       <section className="fj-category-list">
         <div className="row">
-          <div className="col-md-4">
+         {
+          data?.allCategory?.length > 0 && data?.allCategory?.map(item=>{
+            return (
+              <div className="col-md-4" key={item?._id}>
             <div className="fj-category-container">
-              <a className="fj-category subtle-shadow no-border" href="#">
+              <Link className="fj-category subtle-shadow no-border" href={`forum/categories/${item?.id}`}>
                 {
                 // <div className="category-icon">
                 //   <img src="images/pen.png" />
@@ -22,53 +38,20 @@ const Categories = () => {
                 }
                 <div className="category-information">
                   <div className="heading gray-90">
-                    General Discussion
+                    {item?.title}
                   </div>
                   <div className="description">
-                    Just general question
+                    {item?.subTitle}
                   </div>
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
-          <div className="col-md-4">
-            <div className="fj-category-container">
-              <a className="fj-category subtle-shadow no-border" href="#">
-                {
-                // <div className="category-icon">
-                //   <img src="images/pen.png" />
-                // </div>
-                }
-                <div className="category-information">
-                  <div className="heading gray-90">
-                    Other Discussion
-                  </div>
-                  <div className="description">
-                    Just general question
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="fj-category-container">
-              <a className="fj-category subtle-shadow no-border" href="#">
-                {
-                // <div className="category-icon">
-                //   <img src="images/pen.png" />
-                // </div>
-                }
-                <div className="category-information">
-                  <div className="heading gray-90">
-                    Some Discussion
-                  </div>
-                  <div className="description">
-                    Just general question
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
+            )
+          })
+         }
+          
+          
         </div>
       </section>
     </>

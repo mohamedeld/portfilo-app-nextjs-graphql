@@ -23,7 +23,7 @@ const Navbar = () => {
               <Link className="nav-link" href="/portofilo">Portfolio</Link>
             </li>
             <li className="nav-item mr-3">
-              <Link className="nav-link" href="/fourm/categories">Fourm</Link>
+              <Link className="nav-link" href="/forum/categories">Fourm</Link>
             </li>
             <li className="nav-item mr-3">
               <Link className="nav-link" href="/cv">Cv</Link>

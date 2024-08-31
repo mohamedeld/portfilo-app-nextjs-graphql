@@ -71,11 +71,10 @@ const Portofilo = () => {
                   <Link href={`/portofilo/${item?._id}`}>Go to details</Link>
                 </div>
                 <div className="d-flex justify-items-center align-items-center gap-4">
-                <button className="btn btn-primary" onClick={()=> updatePortfolio({
-                  variables:{
-                    id:item._id
-                  }
-                })}>Update</button>
+                <button className="btn btn-primary" 
+               >
+                <Link href={`/portofilo/${item?._id}/edit`}>Update</Link>
+               </button>
                 <button className="btn btn-danger" onClick={()=> deletePortfolio({
                   variables:{
                     id:item._id

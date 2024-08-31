@@ -167,4 +167,15 @@ export const GET_AUTH_USER=gql`
       avatar
     }
   }
+`;
+
+export const  ALLCATEGORY = gql`
+  query AllCategory{
+    allCategory{
+      title
+      subTitle
+      slug
+    }
+  }
+
 `

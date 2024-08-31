@@ -1,15 +1,31 @@
 import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Make sure to import the CSS for the DatePicker
-import { client } from "../_app";
-import { CREATE_PORTFOLIO } from "@/apollo/queries";
+import { CREATE_PORTFOLIO, GET_PORTFOLIO } from "@/apollo/queries";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
+import { useQuery } from "@apollo/client";
+import { DotLoader } from "react-spinners";
+import { client } from "@/pages/_app";
 
-const NewProfolioPage = () => {
+const EditProfolioPage = () => {
   const router = useRouter();
   const { register,handleSubmit,formState:{errors,isSubmitting}, control } = useForm();
+  const id = router?.query?.id;
 
+  const {data,loading,error} = useQuery(GET_PORTFOLIO,{
+    variables:{
+      id:id
+    }
+  });
+  if(loading){
+    return(
+      <DotLoader/>
+    )
+  }
+  if(error){
+    console.log(error)
+  }
   async function onSubmit(values) {
     try{
       const {data} = client.mutate({
@@ -43,6 +59,7 @@ const NewProfolioPage = () => {
               <label htmlFor="title">Title</label>
               <input
                 {...register("title")}
+                value={data?.portfolio?.title}
                 type="text"
                 className="form-control"
                 id="title"
@@ -54,6 +71,7 @@ const NewProfolioPage = () => {
               <label htmlFor="company">Company</label>
               <input
                 {...register("company")}
+                value={data?.portfolio?.company}
                 type="text"
                 className="form-control"
                 id="company"
@@ -65,6 +83,7 @@ const NewProfolioPage = () => {
               <label htmlFor="location">Location</label>
               <input
                 {...register("location")}
+                value={data?.portfolio?.location}
                 type="text"
                 className="form-control"
                 id="location"
@@ -76,6 +95,7 @@ const NewProfolioPage = () => {
               <label htmlFor="jobTitle">Job Title</label>
               <input
                 {...register("jobTitle")}
+                value={data?.portfolio?.jobTitle}
                 type="text"
                 className="form-control"
                 id="jobTitle"
@@ -87,6 +107,7 @@ const NewProfolioPage = () => {
               <label htmlFor="description">Description</label>
               <textarea
                 {...register("description")}
+                value={data?.portfolio?.description}
                 rows="5"
                 className="form-control"
                 id="description"
@@ -99,6 +120,7 @@ const NewProfolioPage = () => {
               <Controller
                 control={control}
                 name="startDate"
+                value={data?.portfolio?.startDate}
                 render={({ field }) => (
                   <DatePicker
                     {...field}
@@ -116,6 +138,7 @@ const NewProfolioPage = () => {
               <Controller
                 control={control}
                 name="endDate"
+                value={data?.portfolio?.endDate}
                 render={({ field }) => (
                   <DatePicker
                     {...field}
@@ -142,4 +165,4 @@ const NewProfolioPage = () => {
   );
 }
 
-export default NewProfolioPage;
+export default EditProfolioPage;

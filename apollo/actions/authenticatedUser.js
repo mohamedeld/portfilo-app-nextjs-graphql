@@ -23,7 +23,6 @@ async function authenticatedUser(email,password){
     variables: { email, password },
   });
  
-  console.log("data",data)
   if(data?.signIn){
     return data?.signIn
   }
